@@ -1,0 +1,22 @@
+{
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue" // 确保包括 .vue 文件
+  ],
+  "compilerOptions": {
+    "noEmitOnError": false, // 默认值是 true，设置为 false 可以忽略错误
+    "experimentalDecorators": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "resolveJsonModule": true
+  },
+}
