@@ -44,9 +44,9 @@ export const DEFAULT_WORKBOOK_DATA = {
   //   pd?: Nullable<IPaddingData> 该字段用于定义单元格的 内边距。内边距控制文本和单元格边缘之间的距离，以使文本内容更易于阅读和排版。
   //   类型：IPaddingData，表示内边距的数据结构，通常包括四个方向（上、右、下、左）的边距设置。
 
-  // ff?: Nullable<string>  该字段指定字体的 字体族（font family）。比如 "Arial"、"Verdana" 等字体。
-  // fs?: number 该字段定义 字体大小，单位为 磅（pt）
-  // it?: BooleanNumber
+  //  ff?: Nullable<string>  该字段指定字体的 字体族（font family）。比如 "Arial"、"Verdana" 等字体。
+  //  fs?: number 该字段定义 字体大小，单位为 磅（pt）
+      // 更多参数含义在HelloWorld.vue的IStyleData里，点击进入查看IStyleBase注释
   // }
   //cellData:{
   //p?  // 单元格的 唯一标识符，通常是一个随机字符串。

@@ -9,7 +9,6 @@ import {
   IWorkbookData,
   IPermissionService,
   IUniverInstanceService,
-  setDependencies,
   ICellData,  //单元格数据结构。
   IStyleData  //单元格样式。
 
