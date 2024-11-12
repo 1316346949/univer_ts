@@ -141,15 +141,12 @@ export const DEFAULT_WORKBOOK_DATA = {
       //   startColumn: 2,
       // },
       mergeData: [
-        //合并范围
+        // //合并范围
         {
           startRow: 0,
           startColumn: 0,
           endRow: 0,
           endColumn: 1,
-          rangeType: 0,
-          unitId: "workbook-01",
-          sheetId: "sheet-01",
         },
       ],
       zoomRatio: 1,
