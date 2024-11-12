@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive, watch } from "vue";
+import { ref, onMounted, reactive, watch, onUnmounted } from "vue";
 import {
   Univer,
   UniverInstanceType,
@@ -106,20 +106,29 @@ const init = () => {
   // workbook.value = univer.createUnit<IWorkbookData, Workbook>(UniverInstanceType.UNIVER_SHEET, data)
   // 你应该在合适的时机（比如univer加载完成）注册组件
 
-  document.body.ondblclick = () => {
-    const injector = univer.__getInjector()
-    const commandService = injector.get(ICommandService);
-    const sheetSelectionManagerService = injector.get(SheetsSelectionsService);
-    const ranges = sheetSelectionManagerService
-      .getCurrentSelections()
-      .map((selection) => selection.range);
-    console.log("🚀 ~ handler: ~ accessor:", ranges);
-    // alert(123)
-  }
 };
-console.log("🚀 ~ init ~ univerAPI:", univerAPI)
-console.log("🚀 ~ init ~ univerAPI:", univerAPI)
-console.log("🚀 ~ init ~ univerAPI:", univerAPI)
+let excelDom: HTMLElement | null;
+onMounted(() => {
+  //双击编辑事件
+  const timer = setInterval(() => {
+    excelDom = document.getElementById('univer-sheet-main-canvas_workbook-01')
+    if (excelDom) {
+      clearInterval(timer)
+      excelDom.addEventListener('dblclick', dblclickFn)
+    }
+  }, 100)
+})
+
+onUnmounted(() => excelDom!.removeEventListener('dblclick', dblclickFn))
+
+function dblclickFn() {
+  const injector = univer.__getInjector()
+  const sheetSelectionManagerService = injector.get(SheetsSelectionsService);
+  const ranges = sheetSelectionManagerService
+    .getCurrentSelections()
+    .map((selection: { range: [any] }) => selection.range);
+  console.log("🚀 ~ handler: ~ accessor:", ranges);
+}
 
 const destroyUniver = () => {
   // toRaw(univerRef.value)?.dispose();
@@ -368,7 +377,6 @@ const handleFileChange = async (event) => {
                 cellData.style.fill = { indexed: fillStyle.fgColor.indexed };
               }
             }
-            console.log("🚀 ~ row.eachCell ~ cell.style.fill:", cell.style.fill)
           }
 
           // 获取边框样式
@@ -410,6 +418,7 @@ const handleFileChange = async (event) => {
       console.log("🚀 ~ worksheet.eachRow ~ jsonData:", jsonData)
       // 获取所有的合并单元格区域
       const merges = worksheet.model.merges
+      console.log('Merged Ranges:', merges);
       console.log('Merged Ranges:', convertMerges(merges));
       // 输出 JSON 数据
     };

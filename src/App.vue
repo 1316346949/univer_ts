@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import HelloWorld from "./components/HelloWorld.vue";
-import UniverSheet from "./components/UniverSheet.vue";
-import { DEFAULT_WORKBOOK_DATA } from "./default-workbook-data.ts";
+import { DEFAULT_WORKBOOK_DATA } from "./default-workbook-data";
 import { ref } from "vue";
 
 const data = ref(DEFAULT_WORKBOOK_DATA);
-const univerRef = ref<InstanceType<typeof UniverSheet> | null>(null);
+const univerRef = ref<InstanceType<typeof HelloWorld> | null>(null);
 const isShow = ref(true);
 
 const getData = () => {
