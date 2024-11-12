@@ -9,7 +9,10 @@ import {
   IWorkbookData,
   IPermissionService,
   IUniverInstanceService,
-  setDependencies
+  setDependencies,
+  ICellData,  //单元格数据结构。
+  IStyleData  //单元格样式。
+
 } from "@univerjs/core";
 import { zhCN, enUS } from "univer:locales";
 import { defaultTheme } from "@univerjs/design";
@@ -24,13 +27,12 @@ import { UniverSheetsUIPlugin } from "@univerjs/sheets-ui";
 import { FUniver } from "@univerjs/facade";
 import { ClickOperation } from "../plugin/commands/my-command";
 import { UniverSheetsCustomMenuPlugin } from '../plugin';
-import { UniverExchangeClientPlugin } from "@univerjs-pro/exchange-client";
-import { UniverSheetsExchangeClientPlugin } from "@univerjs-pro/sheets-exchange-client";
 import { UniverDrawingPlugin } from "@univerjs/drawing";
 import { UniverDrawingUIPlugin } from "@univerjs/drawing-ui";
 import { UniverSheetsDrawingPlugin } from "@univerjs/sheets-drawing";
 import { UniverSheetsDrawingUIPlugin } from "@univerjs/sheets-drawing-ui";
-import * as XLSX from "xlsx";
+// import * as XLSX from "xlsx-js-style";
+import ExcelJS from 'exceljs';
 import {
   UniverSheetsPlugin,
   WorkbookEditablePermission, //编辑权限
@@ -40,15 +42,23 @@ import {
   RangeProtectionPermissionEditPoint,
   DeleteRangeProtectionMutation,
 } from "@univerjs/sheets";
-import { DEFAULT_WORKBOOK_DATA } from "../default-workbook-data.ts";
+import { DEFAULT_WORKBOOK_DATA } from "../default-workbook-data";
 import { useStore } from 'vuex';
 
+
+// 导入导出
+import '@univerjs-pro/exchange-client/lib/index.css';
+import { UniverExchangeClientPlugin } from '@univerjs-pro/exchange-client';
+import { UniverSheetsExchangeClientPlugin } from '@univerjs-pro/sheets-exchange-client';
 const store = useStore();
 onMounted(() => {
   init();
 });
 let univerAPI: any;
 let univer: any;
+let univerRef = ref(null)
+let workbook = ref(null)
+
 const init = () => {
   univer = new Univer({
     theme: defaultTheme,
@@ -58,6 +68,9 @@ const init = () => {
     },
   });
   univerAPI = FUniver.newAPI(univer);
+  univerRef.value = univer;
+  console.log(univerAPI, 'univerAPIuniverAPIuniverAPIuniverAPI');
+
   // const permission = univerAPI.getPermission();
   // permission.setPermissionDialogVisible(false);
 
@@ -79,15 +92,18 @@ const init = () => {
   univer.registerPlugin(UniverSheetsUIPlugin);
   univer.registerPlugin(UniverSheetsFormulaPlugin);
   univer.registerPlugin(UniverSheetsFormulaUIPlugin);
-  univer.createUnit(UniverInstanceType.UNIVER_SHEET, DEFAULT_WORKBOOK_DATA);
 
-  univer.registerPlugin(UniverExchangeClientPlugin);
-  univer.registerPlugin(UniverSheetsExchangeClientPlugin);
   univer.registerPlugin(UniverDrawingPlugin);
   univer.registerPlugin(UniverDrawingUIPlugin);
   univer.registerPlugin(UniverSheetsDrawingPlugin);
   univer.registerPlugin(UniverSheetsDrawingUIPlugin);
+  // 导入导出
+  univer.registerPlugin(UniverExchangeClientPlugin);
+  univer.registerPlugin(UniverSheetsExchangeClientPlugin);
 
+  // 创建excel工作簿
+  workbook.value = univer.createUnit(UniverInstanceType.UNIVER_SHEET, DEFAULT_WORKBOOK_DATA);
+  // workbook.value = univer.createUnit<IWorkbookData, Workbook>(UniverInstanceType.UNIVER_SHEET, data)
   // 你应该在合适的时机（比如univer加载完成）注册组件
 
   document.body.ondblclick = () => {
@@ -98,9 +114,12 @@ const init = () => {
       .getCurrentSelections()
       .map((selection) => selection.range);
     console.log("🚀 ~ handler: ~ accessor:", ranges);
-    alert(123)
+    // alert(123)
   }
 };
+console.log("🚀 ~ init ~ univerAPI:", univerAPI)
+console.log("🚀 ~ init ~ univerAPI:", univerAPI)
+console.log("🚀 ~ init ~ univerAPI:", univerAPI)
 
 const destroyUniver = () => {
   // toRaw(univerRef.value)?.dispose();
@@ -112,10 +131,10 @@ const destroyUniver = () => {
  * Get workbook data
  */
 const getData = () => {
-  // if (!workbook.value) {
-  //   throw new Error("Workbook is not initialized");
-  // }
-  // return workbook.value.save();
+  if (!workbook.value) {
+    throw new Error("Workbook is not initialized");
+  }
+  return workbook.value.save();
 };
 
 // 禁用表格
@@ -155,6 +174,7 @@ function permissionFn() {
   );
 }
 
+// 禁用方法
 // 单元格权限
 function rangesPermissionFn() {
   const accessor = univer.__getInjector();
@@ -172,13 +192,15 @@ function rangesPermissionFn() {
   //endColumn,endRow,startRow,startRow表示选中的开始列开始行，结束列结束行
   const ranges = sheetSelectionManagerService
     .getCurrentSelections()
-    .map((selection) => selection.range);
+    .map((selection: any) => selection.range);
+  console.log("🚀 ~ rangesPermissionFn ~ ranges:", ranges)
+
   commandService.executeCommand(AddRangeProtectionMutation.id, {
     unitId,
     subUnitId,
     rules: [
       {
-        permissionId: '"3xtfxG1"', //此id是自定义的权限id，删除选中的单元格的权限，需要此id。
+        permissionId: '3xtfxG1', //此id是自定义的权限id，更新权限id时必填，否则出现单元格只存在虚线，还会出现可编辑。
         name: "sheet1",
         unitType: 3,
         unitId,
@@ -186,13 +208,36 @@ function rangesPermissionFn() {
         ranges,
         id: "rule1",
       },
+      // 一次性禁用多个单元格
+      {
+        permissionId: 'sdasasf',
+        name: "sheet1",
+        unitType: 3,
+        unitId,
+        subUnitId,
+        ranges: [{
+          endColumn: 2,
+          endRow: 2,
+          rangeType: 0,
+          sheetId: "sheet-01",
+          startColumn: 2,
+          startRow: 2,
+        }],
+        id: "rule2",
+      }
     ],
   });
   const permissionService = accessor.get(IPermissionService);
   permissionService.updatePermissionPoint(
-    new RangeProtectionPermissionEditPoint(unitId, subUnitId, '"3xtfxG1"').id,
+    new RangeProtectionPermissionEditPoint(unitId, subUnitId, 'sdasasf').id,//传入具体id时，代表用户模式，此单元格无法编辑
     false
   );
+  // 当不去调用permissionService.updatePermissionPoint时代表管理员模式，可以出现禁用单元格虚线，但是还可以编辑
+  //调用permissionService.updatePermissionPoint，并传入正确id后，代表用户模式，出现虚线，并无法编辑。
+  // permissionService.updatePermissionPoint(
+  //   new RangeProtectionPermissionEditPoint(unitId, subUnitId, 'sdasasf').id,
+  //   false
+  // );
 }
 // 删除单元格权限
 function deleteRangesPermissionFn() {
@@ -205,11 +250,11 @@ function deleteRangesPermissionFn() {
     return;
   }
   const { unitId, subUnitId } = target;
-  // 获取需要冻结选中的区域
+  // 获取需要解除冻结选中的区域
   commandService.executeCommand(DeleteRangeProtectionMutation.id, {
     unitId,
     subUnitId,
-    ruleIds: ["rule1"],
+    ruleIds: ["rule1", 'rule2'],
   });
 }
 defineExpose({
@@ -227,54 +272,96 @@ watch(
     drawer.value = true
   }
 );
-
-const handleFileChange = (event) => {
+function isCellMerged(cellAddress, merges) {
+  for (let merge of merges) {
+    const start = XLSX.utils.encode_cell(merge.s);
+    const end = XLSX.utils.encode_cell(merge.e);
+    if (cellAddress >= start && cellAddress <= end) {
+      return {
+        start: start,
+        end: end
+      };
+    }
+  }
+  return null;
+}
+const handleFileChange = async (event) => {
   const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
 
-    reader.onload = (e) => {
-      const data = e.target.result;
-      const workbook = XLSX.read(data, { type: "binary", cellStyles: true });
+  if (file) {
+    const workbook = new ExcelJS.Workbook(); // 创建一个工作簿对象
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const buffer = e.target.result;
+      const workbook = new ExcelJS.Workbook();
+
+      // 读取 Excel 文件
+      await workbook.xlsx.load(buffer);
 
       // 获取第一个工作表
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
+      const worksheet = workbook.worksheets[0];
 
-      // 将工作表数据转换为 JSON 格式并保留样式
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-      const styledData = jsonData.map((row, rowIndex) => {
-        return row.map((cell, colIndex) => {
-          const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: colIndex });
-          const cellObj = worksheet[cellAddress];
+      const jsonData = [];
 
-          // 获取样式：例如加粗、字体颜色等
-          let style = {};
-          if (cellObj && cellObj.s) {
-            const styleObj = cellObj.s;
-            if (styleObj.font && styleObj.font.bold) {
-              style.fontWeight = 'bold';
-            }
-            if (styleObj.font && styleObj.font.color) {
-              style.color = styleObj.font.color.rgb ? `#${styleObj.font.color.rgb}` : styleObj.font.color.rgb;
-            }
-            if (styleObj.fill && styleObj.fill.fgColor) {
-              style.backgroundColor = `#${styleObj.fill.fgColor.rgb}`;
-            }
+      // 遍历工作表的每一行
+      worksheet.eachRow((row, rowIndex) => {
+        const rowData = [];
+
+        // 遍历每一列
+        row.eachCell((cell, colIndex) => {
+          const cellData = {
+            value: cell.value, // 存储单元格的值
+            style: {} // 存储单元格的样式
+          };
+
+          // 获取字体样式
+          if (cell.style.font) {
+            cellData.style.font = cell.style.font;
           }
 
-          return { value: cell, style };
-        });
-      });
-      // 将工作表转为 JSON 格式
-      console.log("导入的数据：", jsonData);
-      console.log("styledDatastyledDatastyledDatastyledData", styledData);
+          // 获取填充（背景色）样式
+          if (cell.style.fill) {
+            cellData.style.fill = cell.style.fill;
+            const fillStyle = cell.style.fill;
 
-      // 你可以在这里将数据保存到 Vuex 或其他状态管理工具中
+            // 检查 fgColor 是否存在
+            if (fillStyle.fgColor) {
+              if (fillStyle.fgColor.argb) {
+                // 使用 fgColor.argb 获取颜色值
+                cellData.style.fill = { argb: fillStyle.fgColor.argb };
+              } else if (fillStyle.fgColor.indexed) {
+                // 如果使用的是索引颜色，获取索引值
+                cellData.style.fill = { indexed: fillStyle.fgColor.indexed };
+              }
+            }
+            console.log("🚀 ~ row.eachCell ~ cell.style.fill:", cell.style.fill)
+          }
+
+          // 获取边框样式
+          if (cell.style.border) {
+            cellData.style.border = cell.style.border;
+          }
+
+          // 获取对齐样式
+          if (cell.style.alignment) {
+            cellData.style.alignment = cell.style.alignment;
+          }
+
+          // 将单元格数据添加到当前行数据中
+          rowData.push(cellData);
+        });
+
+        // 将当前行数据添加到 JSON 数据中
+        jsonData.push(rowData);
+      });
+      console.log("🚀 ~ worksheet.eachRow ~ jsonData:", jsonData)
+
+      // 输出 JSON 数据
     };
 
-    reader.readAsBinaryString(file);  // 读取文件为二进制字符串
+    reader.readAsArrayBuffer(file);
   }
+
 };
 </script>
 

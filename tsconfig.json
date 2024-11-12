@@ -13,10 +13,14 @@
     "moduleResolution": "node",
     "strict": true,
     "jsx": "preserve",
-    "esModuleInterop": true,
+    "esModuleInterop": true, // 允许默认导入非 ES 模块
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "sourceMap": true,           // 启用生成 source map 文件
+    "declaration": true,         // 可选，是否生成声明文件
+    "outDir": "./dist",          // 指定编译后的文件输出目录
   },
+  "exclude": ["node_modules"]    // 排除 node_modules 目录
 }
