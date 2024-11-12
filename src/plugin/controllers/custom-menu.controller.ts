@@ -51,10 +51,7 @@ export class CustomMenuController extends Disposable {
     this._registerComponents();
     this._initMenus();
   }
-
-  /**
-   * register commands
-   */
+ 
   private _initCommands(): void {
     [
       // 注册三个菜单事件
@@ -66,9 +63,6 @@ export class CustomMenuController extends Disposable {
     });
   }
 
-  /**
-   * register icon components
-   */
   //    注册菜单栏图标
   private _registerComponents(): void {
     const componentManager = this._componentManager;
@@ -77,9 +71,6 @@ export class CustomMenuController extends Disposable {
     // this.disposeWithMe(componentManager.register("ItemIcon", ItemIcon));
   }
 
-  /**
-   * register menu items
-   */
   // 注册菜单
   private _initMenus(): void {
     this._menuMangerService.mergeMenu({
@@ -105,7 +96,7 @@ export class CustomMenuController extends Disposable {
         [ContextMenuGroup.OTHERS]: {
           //自定义按钮
           [SingleButtonOperation.id]: {
-            order: 12,
+            order: 12,//排序，数字越小，越靠菜单顶部
             menuItemFactory: CustomMenuItemSingleButtonFactory,
           },
           // 自定义下拉

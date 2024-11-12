@@ -246,6 +246,15 @@ function rangesPermissionFn() {
   //   new RangeProtectionPermissionEditPoint(unitId, subUnitId, 'sdasasf').id,
   //   false
   // );
+  // 依次锁定几个单元格就需要调用permissionService.updatePermissionPoint(xxxx)几次
+  // 下面调用方法无效，无法冻结单元格
+  // permissionService.updatePermissionPoint(
+  //   [
+  //     new RangeProtectionPermissionEditPoint(unitId, subUnitId, '3xtfxG1').id,
+  //     new RangeProtectionPermissionEditPoint(unitId, subUnitId, 'sdasasf').id
+  //   ],
+  //   false
+  // )
 }
 // 删除单元格权限
 function deleteRangesPermissionFn() {
