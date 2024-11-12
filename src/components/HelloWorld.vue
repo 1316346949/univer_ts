@@ -341,7 +341,6 @@ const handleFileChange = async (event) => {
     const reader = new FileReader();
     reader.onload = async (e) => {
       const buffer = e.target.result;
-      const workbook = new ExcelJS.Workbook();
 
       // 读取 Excel 文件
       await workbook.xlsx.load(buffer);
@@ -404,24 +403,6 @@ const handleFileChange = async (event) => {
         // 将当前行数据添加到 JSON 数据中
         jsonData.push(rowData);//theme: 1是excel默认或预定颜色
       });
-
-      // 处理合并单元格的值
-      // mergedRanges.forEach(range => {
-      //   const { from, to } = range;
-      //   const topLeftCell = worksheet.getCell(from.row, from.col);
-
-      //   // 获取合并单元格的值（左上角单元格的值）
-      //   console.log(`Merged Range: From ${from.row}, ${from.col} to ${to.row}, ${to.col}`);
-      //   console.log(`Value of merged cell: ${topLeftCell.value}`);
-
-      //   // 将合并区域的值设置到对应的合并区域
-      //   for (let row = from.row; row <= to.row; row++) {
-      //     for (let col = from.col; col <= to.col; col++) {
-      //       const mergedCell = worksheet.getCell(row, col);
-      //       mergedCell.value = topLeftCell.value; // 设置合并区域其他单元格的值为左上角单元格的值
-      //     }
-      //   }
-      // });
 
       console.log("🚀 ~ worksheet.eachRow ~ jsonData:", jsonData)
       // 获取所有的合并单元格区域
