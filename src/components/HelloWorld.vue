@@ -272,19 +272,50 @@ watch(
     drawer.value = true
   }
 );
-function isCellMerged(cellAddress, merges) {
-  for (let merge of merges) {
-    const start = XLSX.utils.encode_cell(merge.s);
-    const end = XLSX.utils.encode_cell(merge.e);
-    if (cellAddress >= start && cellAddress <= end) {
-      return {
-        start: start,
-        end: end
-      };
-    }
-  }
-  return null;
+
+// 转换颜色值
+function argbToHex(argb: string): string {
+  // 提取 ARGB 中的 R、G、B 部分
+  const red = argb.slice(2, 4);    // 取红色部分
+  const green = argb.slice(4, 6);  // 取绿色部分
+  const blue = argb.slice(6, 8);   // 取蓝色部分
+
+  // 拼接成 #RRGGBB 格式并返回
+  return `#${red}${green}${blue}`;
 }
+// 转换合并单元格的对象
+const columnLetterToIndex = (column: string): number => {
+  let columnIndex = 0;
+  for (let i = 0; i < column.length; i++) {
+    columnIndex = columnIndex * 26 + (column.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
+  }
+  return columnIndex - 1; // Convert to zero-based index
+};
+
+// Function to convert merge ranges to required format
+const convertMerges = (merges: string[]): any[] => {
+  const mergeData = merges.map((merge) => {
+    // Split the range like 'B1:C1' into ['B1', 'C1']
+    const [start, end] = merge.split(':');
+
+    // Extract column and row from start and end cell
+    const startColumn = columnLetterToIndex(start.replace(/[0-9]/g, '')); // e.g. 'B'
+    const startRow = parseInt(start.replace(/[A-Z]/g, ''), 10) - 1; // e.g. '1' -> 0
+
+    const endColumn = columnLetterToIndex(end.replace(/[0-9]/g, '')); // e.g. 'C'
+    const endRow = parseInt(end.replace(/[A-Z]/g, ''), 10) - 1; // e.g. '1' -> 0
+
+    return {
+      startRow,
+      startColumn,
+      endRow,
+      endColumn
+    };
+  });
+
+  return mergeData;
+};
+
 const handleFileChange = async (event) => {
   const file = event.target.files[0];
 
@@ -300,7 +331,6 @@ const handleFileChange = async (event) => {
 
       // 获取第一个工作表
       const worksheet = workbook.worksheets[0];
-
       const jsonData = [];
 
       // 遍历工作表的每一行
@@ -316,6 +346,10 @@ const handleFileChange = async (event) => {
 
           // 获取字体样式
           if (cell.style.font) {
+            const fontStyle = cell.style.font;
+            if (fontStyle?.color?.argb) {
+              fontStyle.color.argb = argbToHex(fontStyle.color.argb)
+            }
             cellData.style.font = cell.style.font;
           }
 
@@ -328,7 +362,7 @@ const handleFileChange = async (event) => {
             if (fillStyle.fgColor) {
               if (fillStyle.fgColor.argb) {
                 // 使用 fgColor.argb 获取颜色值
-                cellData.style.fill = { argb: fillStyle.fgColor.argb };
+                cellData.style.fill = { argb: argbToHex(fillStyle.fgColor.argb) };
               } else if (fillStyle.fgColor.indexed) {
                 // 如果使用的是索引颜色，获取索引值
                 cellData.style.fill = { indexed: fillStyle.fgColor.indexed };
@@ -352,10 +386,31 @@ const handleFileChange = async (event) => {
         });
 
         // 将当前行数据添加到 JSON 数据中
-        jsonData.push(rowData);
+        jsonData.push(rowData);//theme: 1是excel默认或预定颜色
       });
-      console.log("🚀 ~ worksheet.eachRow ~ jsonData:", jsonData)
 
+      // 处理合并单元格的值
+      // mergedRanges.forEach(range => {
+      //   const { from, to } = range;
+      //   const topLeftCell = worksheet.getCell(from.row, from.col);
+
+      //   // 获取合并单元格的值（左上角单元格的值）
+      //   console.log(`Merged Range: From ${from.row}, ${from.col} to ${to.row}, ${to.col}`);
+      //   console.log(`Value of merged cell: ${topLeftCell.value}`);
+
+      //   // 将合并区域的值设置到对应的合并区域
+      //   for (let row = from.row; row <= to.row; row++) {
+      //     for (let col = from.col; col <= to.col; col++) {
+      //       const mergedCell = worksheet.getCell(row, col);
+      //       mergedCell.value = topLeftCell.value; // 设置合并区域其他单元格的值为左上角单元格的值
+      //     }
+      //   }
+      // });
+
+      console.log("🚀 ~ worksheet.eachRow ~ jsonData:", jsonData)
+      // 获取所有的合并单元格区域
+      const merges = worksheet.model.merges
+      console.log('Merged Ranges:', convertMerges(merges));
       // 输出 JSON 数据
     };
 
