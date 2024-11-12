@@ -332,6 +332,17 @@ const convertMerges = (merges: string[]): any[] => {
 
   return mergeData;
 };
+// 辅助函数：将列索引转为 Excel 字母表示
+function getColumnLetter(colIndex) {
+  let letter = '';
+  let temp;
+  while (colIndex >= 0) {
+    temp = colIndex % 26;
+    letter = String.fromCharCode(temp + 65) + letter;
+    colIndex = Math.floor(colIndex / 26) - 1;
+  }
+  return letter;
+}
 
 const handleFileChange = async (event) => {
   const file = event.target.files[0];
@@ -355,7 +366,10 @@ const handleFileChange = async (event) => {
 
         // 遍历每一列
         row.eachCell((cell, colIndex) => {
+          if (!cell.value) return
           const cellData = {
+            // 获取单元格位置，如 A1、B2 等
+            position: `${getColumnLetter(colIndex - 1)}${rowIndex}`,
             value: cell.value, // 存储单元格的值
             style: {} // 存储单元格的样式
           };
@@ -401,7 +415,7 @@ const handleFileChange = async (event) => {
         });
 
         // 将当前行数据添加到 JSON 数据中
-        jsonData.push(rowData);//theme: 1是excel默认或预定颜色
+        rowData.length && jsonData.push(rowData);//theme: 1是excel默认或预定颜色
       });
 
       console.log("🚀 ~ worksheet.eachRow ~ jsonData:", jsonData)
