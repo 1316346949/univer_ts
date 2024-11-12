@@ -46,7 +46,7 @@ export const DEFAULT_WORKBOOK_DATA = {
 
   //  ff?: Nullable<string>  该字段指定字体的 字体族（font family）。比如 "Arial"、"Verdana" 等字体。
   //  fs?: number 该字段定义 字体大小，单位为 磅（pt）
-      // 更多参数含义在HelloWorld.vue的IStyleData里，点击进入查看IStyleBase注释
+  // 更多参数含义在HelloWorld.vue的IStyleData里，点击进入查看IStyleBase注释
   // }
   //cellData:{
   //p?  // 单元格的 唯一标识符，通常是一个随机字符串。
@@ -168,7 +168,7 @@ export const DEFAULT_WORKBOOK_DATA = {
         height: 20,
         hidden: BooleanNumber.FALSE,
       },
-      selections: ["A2"],
+      selections: ["A2", "A3"],
       rightToLeft: BooleanNumber.FALSE, //工作表是否为从右到左模式
       pluginMeta: {},
       //defaultStyle 默认工作表样式

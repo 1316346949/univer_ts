@@ -66,6 +66,14 @@ export class CustomMenuController extends Disposable {
   //    注册菜单栏图标
   private _registerComponents(): void {
     const componentManager = this._componentManager;
+    // 此处注册图标使用vue3组件，导出svg，componentManager.register和框架自带的侧边栏注册方法相同。
+    // componentManager.register(
+    //   'myPopup',
+    //   vue3Component,
+    //   // 如果组件是React组件，需要设置框架为'react'
+    //   // 如果组件是Vue3组件，需要设置框架为'vue3'
+    //   { framework: 'vue3' }
+    // );
     // this.disposeWithMe(componentManager.register("ButtonIcon", ButtonIcon));
     // this.disposeWithMe(componentManager.register("MainButtonIcon", MainButtonIcon));
     // this.disposeWithMe(componentManager.register("ItemIcon", ItemIcon));
