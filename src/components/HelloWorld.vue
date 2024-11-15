@@ -392,7 +392,7 @@ const handleFileChange = async (event) => {
 
         // 遍历每一列
         row.eachCell((cell, colIndex) => {
-          if (!cell.value) return
+          if (!cell.value && !cell.formula) return;
           const columnWidth = worksheet.getColumn(1).width; // 获取列的宽度
 
           const cellData = {
@@ -400,6 +400,7 @@ const handleFileChange = async (event) => {
             position: `${getColumnLetter(colIndex - 1)}${rowIndex}`,
             value: cell.value, // 存储单元格的值
             style: {}, // 存储单元格的样式
+            formula: cell.formula || '',
             columnWidth,
             rowHeight
           };
