@@ -33,6 +33,7 @@ import type { Dependency } from "@univerjs/core";
 import zhCN from "./locale/zh-CN";
 import enUS from "./locale/en-US";
 import { CustomMenuController } from "./controllers/custom-menu.controller";
+import { CustomerService } from "./service/service";
 import { ClickCommand } from "./controllers/my-command.controller";
 
 const SHEET_CUSTOM_MENU_PLUGIN = "SHEET_CUSTOM_MENU_PLUGIN";
@@ -54,14 +55,19 @@ export class UniverSheetsCustomMenuPlugin extends Plugin {
   }
 
   override onStarting(): void {
-    ([[CustomMenuController], [ClickCommand]] as Dependency[]).forEach((d) =>
-      this._injector.add(d)
-    );
+    (
+      [
+        [CustomerService],
+        [CustomMenuController],
+        // [ClickCommand],
+      ] as Dependency[]
+    ).forEach((d) => this._injector.add(d));
   }
 
   onReady(): void {
     this._injector.get(CustomMenuController);
+    this._injector.get(CustomerService);
     //注册点击命名
-    this._injector.get(ClickCommand);
+    // this._injector.get(ClickCommand);
   }
 }

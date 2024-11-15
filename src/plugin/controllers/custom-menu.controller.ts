@@ -25,10 +25,7 @@ import {
   DropdownListSecondItemOperation,
 } from "../commands/operations/dropdown-list.operation";
 // 菜单项图标
-// import { ButtonIcon } from '../components/button-icon/ButtonIcon';
-// import { ButtonIcon } from '../components/button-icon/ButtonIcon';
-// import { MainButtonIcon } from '../components/main-button-icon/MainButtonIcon';
-// import { ItemIcon } from '../components/item-icon/ItemIcon';
+import {ButtonIcon} from '../components/ButtonIcon';
 import {
   CUSTOM_MENU_DROPDOWN_LIST_OPERATION_ID,
   CustomMenuItemDropdownListFirstItemFactory,
@@ -46,7 +43,6 @@ export class CustomMenuController extends Disposable {
     private readonly _componentManager: ComponentManager
   ) {
     super();
-    // this._componentManager.get(PermissionService)//Permission
     this._initCommands();
     this._registerComponents();
     this._initMenus();
@@ -67,39 +63,36 @@ export class CustomMenuController extends Disposable {
   private _registerComponents(): void {
     const componentManager = this._componentManager;
     // 此处注册图标使用vue3组件，导出svg，componentManager.register和框架自带的侧边栏注册方法相同。
-    // componentManager.register(
-    //   'myPopup',
-    //   vue3Component,
-    //   // 如果组件是React组件，需要设置框架为'react'
-    //   // 如果组件是Vue3组件，需要设置框架为'vue3'
-    //   { framework: 'vue3' }
-    // );
-    // this.disposeWithMe(componentManager.register("ButtonIcon", ButtonIcon));
-    // this.disposeWithMe(componentManager.register("MainButtonIcon", MainButtonIcon));
-    // this.disposeWithMe(componentManager.register("ItemIcon", ItemIcon));
+    this.disposeWithMe(componentManager.register(
+      'ButtonIcon',
+      ButtonIcon,
+      // 如果组件是Vue3组件，需要设置框架为'vue3'
+      { framework: 'vue3' }
+    ))
+   
   }
 
   // 注册菜单
   private _initMenus(): void {
     this._menuMangerService.mergeMenu({
-      [RibbonStartGroup.OTHERS]: {
-        [SingleButtonOperation.id]: {
-          order: 10,
-          menuItemFactory: CustomMenuItemSingleButtonFactory,
-        },
-        [CUSTOM_MENU_DROPDOWN_LIST_OPERATION_ID]: {
-          order: 11,
-          menuItemFactory: CustomMenuItemDropdownListMainButtonFactory,
-          [DropdownListFirstItemOperation.id]: {
-            order: 0,
-            menuItemFactory: CustomMenuItemDropdownListFirstItemFactory,
-          },
-          [DropdownListSecondItemOperation.id]: {
-            order: 1,
-            menuItemFactory: CustomMenuItemDropdownListSecondItemFactory,
-          },
-        },
-      },
+      // [RibbonStartGroup.OTHERS]: {
+      //   [SingleButtonOperation.id]: {
+      //     order: 10,
+      //     menuItemFactory: CustomMenuItemSingleButtonFactory,
+      //   },
+      //   [CUSTOM_MENU_DROPDOWN_LIST_OPERATION_ID]: {
+      //     order: 11,
+      //     menuItemFactory: CustomMenuItemDropdownListMainButtonFactory,
+      //     [DropdownListFirstItemOperation.id]: {
+      //       order: 0,
+      //       menuItemFactory: CustomMenuItemDropdownListFirstItemFactory,
+      //     },
+      //     [DropdownListSecondItemOperation.id]: {
+      //       order: 1,
+      //       menuItemFactory: CustomMenuItemDropdownListSecondItemFactory,
+      //     },
+      //   },
+      // },
       [ContextMenuPosition.MAIN_AREA]: {
         [ContextMenuGroup.OTHERS]: {
           //自定义按钮

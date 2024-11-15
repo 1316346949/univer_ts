@@ -1,7 +1,6 @@
 import type { IMenuButtonItem } from '@univerjs/ui';
 import { MenuItemType } from '@univerjs/ui';
 
-// import { SingleButtonOperation } from '../../commands/operations/single-button.operation';
 import { SingleButtonOperation } from '../../commands/operations/single-button.operation';
 
 export function CustomMenuItemSingleButtonFactory(): IMenuButtonItem<string> {

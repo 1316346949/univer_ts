@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { univerPlugin } from "@univerjs/vite-plugin";
+import vueJsx from '@vitejs/plugin-vue-jsx';
 // https://vite.dev/config/
 
 export default defineConfig({
@@ -46,7 +47,7 @@ export default defineConfig({
   },
 
   // 开发服务器配置
-  plugins: [vue(), univerPlugin()],
+  plugins: [vue(), univerPlugin(),vueJsx()],
   server: {
     host: "127.0.0.1",
     port: 6500,

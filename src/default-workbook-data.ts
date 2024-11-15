@@ -69,6 +69,16 @@ export const DEFAULT_WORKBOOK_DATA = {
       cl: {
         rgb: "#FDC49B",
       },
+      // tr: {
+      //   a: -45,
+      // },
+      td: 1
+      // st: {  //删除线
+      //   s: 1,
+      //   cl: {
+      //     rgb: "#FDC49B",
+      //   },
+      // },
     },
   },
   sheets: {
@@ -85,55 +95,28 @@ export const DEFAULT_WORKBOOK_DATA = {
           },
         },
       },
-      // rowData: {},//行数据对象的数组
+      rowData: {//行数据对象的数组
+        "0": {
+          he: 300,
+          hd: 0,
+        },
+      },
       name: "sheet1", //工作表的名称
-      // columnData: {  //列数据对象的数组
-      //   "0": {
-      //     w: 125,
-      //     hd: 0,
-      //   },
-      //   "1": {
-      //     w: 125,
-      //     hd: 0,
-      //   },
-      //   "2": {
-      //     w: 125,
-      //     hd: 0,
-      //   },
-      //   "3": {
-      //     w: 125,
-      //     hd: 0,
-      //   },
-      //   "4": {
-      //     w: 125,
-      //     hd: 0,
-      //   },
-      //   "5": {
-      //     w: 125,
-      //     hd: 0,
-      //   },
-      //   "6": {
-      //     w: 125,
-      //     hd: 0,
-      //   },
-      //   "7": {
-      //     w: 125,
-      //     hd: 0,
-      //   },
-      //   "8": {
-      //     w: 125,
-      //     hd: 0,
-      //   },
-      //   "9": {
-      //     w: 125,
-      //     hd: 0,
-      //   },
-      // },
+      columnData: {  //列数据对象的数组
+        "0": {
+          w: 150,
+          hd: 0,
+        },
+        "1": {
+          w: 125,
+          hd: 0,
+        },
+      },
       // tabColor: "red",//工作表标签的颜色
       hidden: BooleanNumber.FALSE, //工作表是否隐藏。默认值：BooleanNumber.FALSE
-      rowCount: 1000, //总行数
+      rowCount: 100, //总行数
       columnCount: 20, //总列数。
-      // freeze: { xSplit: 1, ySplit: 1, startRow: 1, startColumn: 1 },//冻结窗格设置
+      freeze: { xSplit: 3, ySplit: 3, startRow: 2, startColumn: 2 },//冻结窗格设置
       // freeze: {
       //   xSplit: 3,
       //   ySplit: 4,
@@ -150,7 +133,7 @@ export const DEFAULT_WORKBOOK_DATA = {
         },
       ],
       zoomRatio: 1,
-      scrollTop: 200,
+      scrollTop: 2000,
       scrollLeft: 100,
       defaultColumnWidth: 93, //列的默认宽度
       defaultRowHeight: 27, //行的默认高度
@@ -160,12 +143,12 @@ export const DEFAULT_WORKBOOK_DATA = {
       hideColumn: [],
       rowHeader: {
         //行标题配置{ width: number; hidden?: BooleanNumber; }
-        width: 46,
+        width: 20,
         hidden: BooleanNumber.FALSE,
       },
       columnHeader: {
         //列标题配置{ height: number; hidden?: BooleanNumber; }
-        height: 20,
+        height: 40,
         hidden: BooleanNumber.FALSE,
       },
       selections: ["A2", "A3"],

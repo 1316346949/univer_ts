@@ -21,6 +21,10 @@
     "sourceMap": true,           // 启用生成 source map 文件
     "declaration": true,         // 可选，是否生成声明文件
     "outDir": "./dist",          // 指定编译后的文件输出目录
+    "types": [
+      "vue",
+      "vite/client"
+    ]
   },
   "exclude": ["node_modules"]    // 排除 node_modules 目录
 }
